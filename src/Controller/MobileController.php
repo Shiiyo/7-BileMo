@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Mobile;
 use App\Repository\MobileRepository;
+use App\Normalizer\Normalizer as Normalizer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -30,8 +30,11 @@ class MobileController extends AbstractController
     {
         $mobiles = $repo->findAll();
 
-        $data = $serializer->serialize($mobiles, 'json');
+        $normalizer = new Normalizer;
 
-        return new Response($data, 200, ['Content-Type', 'application/json']);
+        $data = $normalizer->normalize($mobiles, 'list');
+        $jsonData = $serializer->serialize($data, 'json');
+
+        return new Response($jsonData, 200, ['Content-Type', 'application/json']);
     }
 }
