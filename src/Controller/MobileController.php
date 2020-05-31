@@ -20,10 +20,7 @@ class MobileController extends AbstractController
 
         $data = $serializer->serialize($mobile, 'json');
 
-        $response = new Response($data);
-        $response->headers->set('Content-Type', 'application/json');
- 
-        return $response;
+        return new Response($data, 200, ['Content-Type', 'application/json']);
     }
 
     /**
@@ -35,9 +32,6 @@ class MobileController extends AbstractController
 
         $data = $serializer->serialize($mobiles, 'json');
 
-        $response = new Response($data);
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
+        return new Response($data, 200, ['Content-Type', 'application/json']);
     }
 }
