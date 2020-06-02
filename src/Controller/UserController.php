@@ -3,12 +3,15 @@
 namespace App\Controller;
 
 use App\DTO\UserDTO;
+use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Normalizer\Normalizer as Normalizer;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class UserController extends AbstractController
 {
@@ -38,6 +41,18 @@ class UserController extends AbstractController
         $jsonData = $serializer->serialize($data, 'json');
 
         return new Response($jsonData, 200, ['Content-Type', 'application/json']);
+    }
+
+    /**
+     * @Route("/users", name="user_create", methods={"POST"})
+     */
+    public function createAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager)
+    {
+        $newUser = $serializer->deserialize($request->getContent(), User::class, 'json');
+        $manager->persist($newUser);
+        $manager->flush();
+
+        return new Response("User created !", 201);
     }
 }
 

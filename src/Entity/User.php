@@ -20,7 +20,7 @@ class User
 
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="lastName")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $client;
 
