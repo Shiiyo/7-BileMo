@@ -54,5 +54,32 @@ class UserController extends AbstractController
 
         return new Response("User created !", 201);
     }
+
+    /**
+     * @Route("/users/{id}", name="user_update", methods={"PUT"}, requirements={"id"="\d+"})
+     */
+    public function updateAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, UserRepository $repo, $id)
+    {
+        $updateUser = $serializer->deserialize($request->getContent(), User::class, 'json');
+
+        $oldUser = $repo->findOneById($id);
+
+        if($updateUser->getLastName() !== null AND $updateUser->getLastName() !== $oldUser->getLastName()){
+            $oldUser->setLastName($updateUser->getLastName());
+        }
+
+        if ($updateUser->getFirstName() !== null and $updateUser->getFirstName() !== $oldUser->getFirstName()) {
+            $oldUser->setFirstName($updateUser->getFirstName());
+        }
+
+        if ($updateUser->getEmail() !== null and $updateUser->getEmail() !== $oldUser->getEmail()) {
+            $oldUser->setEmail($updateUser->getEmail());
+        }
+
+        $manager->persist($oldUser);
+        $manager->flush();
+
+        return new Response("User updated !", 200);
+    }
 }
 
