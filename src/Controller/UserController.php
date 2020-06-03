@@ -81,5 +81,17 @@ class UserController extends AbstractController
 
         return new Response("User updated !", 200);
     }
+
+    /**
+     * @Route("/users/{id}", name="user_delete", methods={"DELETE"}, requirements={"id"="\d+"})
+     */
+    public function deleteAction($id, EntityManagerInterface $manager, UserRepository $repo)
+    {
+        $user = $repo->findOneById($id);
+        $manager->remove($user);
+        $manager->flush();
+
+        return new Response("User deleted !", 200);
+    }
 }
 
