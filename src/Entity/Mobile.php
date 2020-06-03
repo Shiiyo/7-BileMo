@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Repository\MobileRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=MobileRepository::class)
@@ -14,11 +14,13 @@ class Mobile
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups("list")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * * @Groups("list")
      */
     private $name;
 

@@ -213,6 +213,9 @@
     "symfony/http-kernel": {
         "version": "v5.0.8"
     },
+    "symfony/inflector": {
+        "version": "v5.0.9"
+    },
     "symfony/maker-bundle": {
         "version": "1.0",
         "recipe": {
@@ -236,6 +239,9 @@
     },
     "symfony/polyfill-php73": {
         "version": "v1.17.0"
+    },
+    "symfony/property-access": {
+        "version": "v5.0.9"
     },
     "symfony/routing": {
         "version": "4.2",
