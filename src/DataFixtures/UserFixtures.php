@@ -8,25 +8,36 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 
 class UserFixtures extends Fixture
 {
+    private $names = [
+        'SFR',
+        'Free',
+        'Bouygues',
+        'Orange',
+    ];
+
     public function load(ObjectManager $manager)
     {
         $faker = \Faker\Factory::create('fr_FR');
 
-        $clientArray = $manager->getRepository('App\Entity\Client')->findAll();
-        foreach($clientArray as $client){
-            for ($i = 1; $i <= 6; $i++) {
-                $user = new User();
+        foreach ($this->getNames() as $name)
+        {
+            $user = new User();
 
-                $user->setClient($client);
-                $client->addUser($user);
-                $user->setLastName($faker->lastName());
-                $user->setFirstName($faker->firstName());
-                $user->setEmail($faker->email());
+            $user->setName($name);
+            $user->setEmail($faker->email());
+            $user->setUsername($faker->userName());
+            $user->setPassword($faker->password());
 
-                $manager->persist($user);
-                $manager->persist($client);
-            }
+            $manager->persist($user);
         }
+    }
+
+    /**
+     * Get the value of names
+     */ 
+    public function getNames()
+    {
+        return $this->names;
     }
 }
 

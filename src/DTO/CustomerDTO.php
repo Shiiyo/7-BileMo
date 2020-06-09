@@ -2,23 +2,23 @@
 
 namespace App\DTO;
 
-use App\Entity\User;
+use App\Entity\Customer;
 
-class UserDTO
+class CustomerDTO
 {
     private $id;
-    private $clientName;
+    private $UserName;
     private $lastName;
     private $firstName;
     private $email;
 
-    public function __construct(User $user)
+    public function __construct(Customer $customer)
     {
-        $this->setId($user->getId());
-        $this->setClientName($user->getClient()->getName());
-        $this->setLastName($user->getLastName());
-        $this->setFirstName($user->getFirstName());
-        $this->setEmail($user->getEmail());
+        $this->setId($customer->getId());
+        $this->setUserName($customer->getUser()->getName());
+        $this->setLastName($customer->getLastName());
+        $this->setFirstName($customer->getFirstName());
+        $this->setEmail($customer->getEmail());
     }
 
     /**
@@ -42,21 +42,21 @@ class UserDTO
     }
 
     /**
-     * Get the value of clientName
+     * Get the value of UserName
      */ 
-    public function getClientName()
+    public function getUserName()
     {
-        return $this->clientName;
+        return $this->UserName;
     }
 
     /**
-     * Set the value of clientName
+     * Set the value of UserName
      *
      * @return  self
      */ 
-    public function setClientName($clientName)
+    public function setUserName($UserName)
     {
-        $this->clientName = $clientName;
+        $this->UserName = $UserName;
 
         return $this;
     }
