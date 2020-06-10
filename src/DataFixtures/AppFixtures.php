@@ -13,15 +13,15 @@ class AppFixtures extends Fixture
         $mobileFixture = new MobileFixtures();
         $mobileFixture->load($manager);
 
-        //Create Clients
-        $clientFixture = new ClientFixtures();
-        $clientFixture->load($manager);
-
-        $manager->flush();
-
         //Create Users
         $userFixture = new UserFixtures();
         $userFixture->load($manager);
+
+        $manager->flush();
+
+        //Create Customers
+        $customerFixture = new CustomerFixtures();
+        $customerFixture->load($manager);
 
         $manager->flush();
     }
