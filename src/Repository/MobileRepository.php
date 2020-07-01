@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Mobile;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @method Mobile|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +19,28 @@ class MobileRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Mobile::class);
+    }
+
+    public function getMobilePage(int $offset, int $nbResult): Paginator
+    {
+        $firstResult = ($offset - 1) * $nbResult;
+
+        $query = $this->createQueryBuilder('m');
+        $query->select('m')
+            ->setMaxResults($nbResult)
+            ->setFirstResult($firstResult)
+            ->getQuery();
+        return new Paginator($query);
+    }
+
+    public function findMaxNbOfPage($nbResult)
+    {
+        $req = $this->createQueryBuilder('m')
+            ->select('COUNT(m)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return ceil($req / $nbResult);
     }
 
     // /**
