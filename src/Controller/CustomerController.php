@@ -5,13 +5,14 @@ namespace App\Controller;
 use App\DTO\CustomerDTO;
 use App\Entity\Customer;
 use App\Repository\CustomerRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Normalizer\Normalizer as Normalizer;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Normalizer\Normalizer as Normalizer;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CustomerController extends AbstractController
 {
@@ -31,12 +32,21 @@ class CustomerController extends AbstractController
     /**
      * @Route("/customers", name="customer_list", methods={"GET"})
      */
-    public function listAction(SerializerInterface $serializer, CustomerRepository $repo)
+    public function listAction(SerializerInterface $serializer, CustomerRepository $repo, Request $request)
     {
-        $customers = $repo->findAll();
-        $normalizer = new Normalizer;
+        //Paging
+        $offset = max(0, $request->get('offset'));
+        $nbResult =  max(2, $request->get('nbResult'));
+        $totalPage = $repo->findMaxNbOfPage($nbResult);
 
-        $data = $normalizer->normalize($customers, 'list');
+        if ($offset > $totalPage || $offset <= 0) {
+            throw new NotFoundHttpException("La page n'existe pas");
+        }
+
+        $page = $repo->getCustomerPage($offset, $nbResult);
+
+        $normalizer = new Normalizer;
+        $data = $normalizer->normalize($page, 'list');
         $jsonData = $serializer->serialize($data, 'json');
 
         return new Response($jsonData, 200, ['Content-Type', 'application/json']);
