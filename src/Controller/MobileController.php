@@ -4,10 +4,13 @@ namespace App\Controller;
 
 use App\Repository\MobileRepository;
 use App\Normalizer\Normalizer as Normalizer;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MobileController extends AbstractController
 {
@@ -26,13 +29,21 @@ class MobileController extends AbstractController
     /**
      * @Route("/mobiles", name="mobile_list", methods={"GET"})
      */
-    public function listAction(SerializerInterface $serializer, MobileRepository $repo)
+    public function listAction(SerializerInterface $serializer, MobileRepository $repo, Request $request)
     {
-        $mobiles = $repo->findAll();
+        //Paging
+        $offset = max(0, $request->get('offset'));
+        $nbResult =  max(2, $request->get('nbResult'));
+        $totalPage = $repo->findMaxNbOfPage($nbResult);
+
+        if($offset > $totalPage || $offset <= 0) {
+            throw new NotFoundHttpException("La page n'existe pas");
+        }
+
+        $page = $repo->getMobilePage($offset, $nbResult);
 
         $normalizer = new Normalizer;
-
-        $data = $normalizer->normalize($mobiles, 'list');
+        $data = $normalizer->normalize($page, 'list');
         $jsonData = $serializer->serialize($data, 'json');
 
         return new Response($jsonData, 200, ['Content-Type', 'application/json']);
