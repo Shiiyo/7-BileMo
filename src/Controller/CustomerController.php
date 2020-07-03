@@ -13,18 +13,23 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class CustomerController extends AbstractController
 {
     /**
      * @Route("/customers/{id}", name="customer_show", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id)
+    public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id, UserInterface $user)
     {
-        $customer = $repo->findOneById($id);
-        $customerDTO = new CustomerDTO($customer);
-
-        $data = $serializer->serialize($customerDTO, 'json');
+        $customer = $repo->findOneByIdCustomUser($id, $user);
+        if($customer !== null){
+            $customerDTO = new CustomerDTO($customer);
+            $data = $serializer->serialize($customerDTO, 'json');
+        }
+        else{
+            throw new NotFoundHttpException("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
+        }
 
         return new Response($data, 200, ['Content-Type', 'application/json']);
     }
@@ -32,18 +37,18 @@ class CustomerController extends AbstractController
     /**
      * @Route("/customers", name="customer_list", methods={"GET"})
      */
-    public function listAction(SerializerInterface $serializer, CustomerRepository $repo, Request $request)
+    public function listAction(SerializerInterface $serializer, CustomerRepository $repo, Request $request, UserInterface $user)
     {
         //Paging
         $offset = max(0, $request->get('offset'));
         $nbResult =  max(2, $request->get('nbResult'));
-        $totalPage = $repo->findMaxNbOfPage($nbResult);
+        $totalPage = $repo->findMaxNbOfPage($nbResult, $user);
 
         if ($offset > $totalPage || $offset <= 0) {
             throw new NotFoundHttpException("La page n'existe pas");
         }
 
-        $page = $repo->getCustomerPage($offset, $nbResult);
+        $page = $repo->getCustomerPage($offset, $nbResult, $user);
 
         $normalizer = new Normalizer;
         $data = $normalizer->normalize($page, 'list');
@@ -67,11 +72,15 @@ class CustomerController extends AbstractController
     /**
      * @Route("/customers/{id}", name="customer_update", methods={"PUT"}, requirements={"id"="\d+"})
      */
-    public function updateAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, CustomerRepository $repo, $id)
+    public function updateAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, CustomerRepository $repo, $id, UserInterface $user)
     {
         $updateCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json');
 
-        $oldCustomer = $repo->findOneById($id);
+        $oldCustomer = $repo->findOneByIdCustomUser($id, $user);
+
+        if ($oldCustomer == null) {
+            throw new NotFoundHttpException("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
+        }
 
         if($updateCustomer->getLastName() !== null AND $updateCustomer->getLastName() !== $oldCustomer->getLastName()){
             $oldCustomer->setLastName($updateCustomer->getLastName());
@@ -94,9 +103,13 @@ class CustomerController extends AbstractController
     /**
      * @Route("/customers/{id}", name="customer_delete", methods={"DELETE"}, requirements={"id"="\d+"})
      */
-    public function deleteAction($id, EntityManagerInterface $manager, CustomerRepository $repo)
+    public function deleteAction($id, EntityManagerInterface $manager, CustomerRepository $repo, UserInterface $user)
     {
-        $customer = $repo->findOneById($id);
+        $customer = $repo->findOneByIdCustomUser($id, $user);
+
+        if ($customer == null) {
+            throw new NotFoundHttpException("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
+        }
         $manager->remove($customer);
         $manager->flush();
 
