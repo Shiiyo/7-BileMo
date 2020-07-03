@@ -7,7 +7,7 @@ use App\Entity\Customer;
 class CustomerDTO
 {
     private $id;
-    private $UserName;
+    private $owner;
     private $lastName;
     private $firstName;
     private $email;
@@ -15,7 +15,7 @@ class CustomerDTO
     public function __construct(Customer $customer)
     {
         $this->setId($customer->getId());
-        $this->setUserName($customer->getUser()->getName());
+        $this->setOwner($customer->getUser()->getName());
         $this->setLastName($customer->getLastName());
         $this->setFirstName($customer->getFirstName());
         $this->setEmail($customer->getEmail());
@@ -42,21 +42,21 @@ class CustomerDTO
     }
 
     /**
-     * Get the value of UserName
+     * Get the value of Owner
      */ 
-    public function getUserName()
+    public function getOwner()
     {
-        return $this->UserName;
+        return $this->Owner;
     }
 
     /**
-     * Set the value of UserName
+     * Set the value of Owner
      *
      * @return  self
      */ 
-    public function setUserName($UserName)
+    public function setOwner($Owner)
     {
-        $this->UserName = $UserName;
+        $this->Owner = $Owner;
 
         return $this;
     }

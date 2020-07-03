@@ -19,23 +19,38 @@ class CustomerRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Customer::class);
     }
+    
+    public function findOneByIdCustomUser($id, $user)
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.user = :user')
+            ->setParameter('user', $user)
+            ->andWhere('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
-    public function getCustomerPage(int $offset, int $nbResult): Paginator
+    public function getCustomerPage(int $offset, int $nbResult, $user): Paginator
     {
         $firstResult = ($offset - 1) * $nbResult;
 
         $query = $this->createQueryBuilder('c');
         $query->select('c')
+            ->where('c.user = :user')
+            ->setParameter('user', $user)
             ->setMaxResults($nbResult)
             ->setFirstResult($firstResult)
             ->getQuery();
         return new Paginator($query);
     }
 
-    public function findMaxNbOfPage($nbResult)
+    public function findMaxNbOfPage($nbResult, $user)
     {
         $req = $this->createQueryBuilder('c')
             ->select('COUNT(c)')
+            ->where('c.user = :user')
+            ->setParameter('user', $user)
             ->getQuery()
             ->getSingleScalarResult();
 
