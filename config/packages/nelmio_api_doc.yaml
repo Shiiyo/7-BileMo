@@ -7,9 +7,9 @@ nelmio_api_doc:
         tags:
             - name: "Utilisateurs"
               description: "Afficher et gérer les utilisateurs"
-            - name: "mobiles"
+            - name: "Mobiles"
               description: "Voir les mobiles de la marque Bilemo"
-            - name: "login"
+            - name: "Login"
               description: "Générer un token d'autentification"
         paths:
             /customers:
@@ -17,7 +17,6 @@ nelmio_api_doc:
                     tags:
                         - "Utilisateurs"
                     summary: Liste les utilisateurs lié au client connecté
-                    description: "Retourne l'utilisateur demandé"
                     produces: 
                         - "application/json"
                     parameters:
@@ -129,7 +128,87 @@ nelmio_api_doc:
                             description: L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.
                     security:
                         - BearerAuth: []
+ 
+            /mobiles:
+                get:
+                    tags:
+                        - "Mobiles"
+                    summary: Liste les mobiles de la marque Bilemo
+                    produces: 
+                        - "application/json"
+                    parameters:
+                        - name: "offset"
+                          in: "query"
+                          description: "Numéro de la page"
+                          required: true 
+                          type: "integer"
+                            
+                        - name: "nbResult"
+                          in: "query"
+                          description: "Nombre de résultats par page"
+                          required: true 
+                          type: "integer"
+                    responses:
+                        200:
+                            description: Un tableau JSON des téléphones trouvés
+                            schema:
+                            $ref: "#/definitions/ArrayOfMobiles"
+                        404:
+                            description: La page n'existe pas.
+                    security:
+                        - BearerAuth: []
+                
+            /mobiles/{id}:
+                get:
+                    tags:
+                        - "Mobiles"
+                    summary: Trouve un téléphone par son ID
+                    description: "Retourne le téléphone demandé"
+                    produces: 
+                        - "application/json"
+                    parameters:
+                        - name: "id"
+                          in: "path"
+                          description: "ID du téléphone à trouver"
+                          required: true 
+                          type: "integer"
+                    responses:
+                        200:
+                            description: Un tableau JSON décrivant le téléphone
+                            schema:
+                                $ref: "#/definitions/Mobile"
+                    security:
+                        - BearerAuth: []
+                
+            /api/login_check:
+                post:
+                    tags:
+                        - "Login"
+                    summary: Générer un token
+                    description: "Permet de se logger pour recevoir son token d'identification"
+                    produces: 
+                        - "application/json"
+                    parameters:
+                        - name: "login"
+                          in: "body"
+                          description: "Vos identifiants"
+                          required: true
+                          schema:
+                            $ref: "#/definitions/Loggin"
+                    responses:
+                        200:
+                            description: "Renvoie le token d'authentification"
+                            schema:
+                            type: "object"
+                            properties:
+                                token:
+                                type: "string"
+                                example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE1OTQxOTA0MDksImV4cCI6MTU5NDE5NDAxMCwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6InNheXNhIn0.YFeWbn_Z0nzM0E2X2xMcpSPei5RXmN1GKTde9_XYfDNkp4Ygl7K6xABilm-eDsObvgcZQHImvyD-BCgX0301uKCGiQVhaBNsQKG_j5ApI-Wh8SUjH8hZmiyI46ngmvRS0HegZtH6KE-f7BrMA62CRoBnHwzOl-jDao39E7aBYywUgNfTX2_aGtAUlt6_0wqhBD5kdjvvn7y56jH65kLpAafW65pje11PS0MbFyeRGewt5sQ6xFcBIwNc4Iy8Gqv7TqyIwygfmKTRRhEDniP30dbmCPTRxFQSgWmPBlKj186lDXVhgIKUEf3IKJYnrfK6ksnX_czcjtR3yf3cysxuS9dddemVMo7ZXHoIyctm_ar-NqEOVq78qqzfhba3HrpN2yJDjpGyJjZntYGy0dF9Uk-QnK7GpLSCuyhcy3wJQhJXDnNm_YJhz290BW1cyI4qsiaZXCvgGZMThr8T0QJWCUeGZHhVd_aA40altxS8Lb724PQAEAN49K8eep4F11nXi8dlaNE6CPDe_71G6FytR6HgDL6kfSW0kjctrwukHWHwoBpvY0RdFXiAuZHDX9-BTdlBiVWmWYBvWeTbhWAAoWg81doE0DMLhZS0-HpsdcnivRNGQPbaQnyynYAhCAtOJ5nLLhf9BiJTrsWxOnmOh0fyrJ7B3dq73bMuDMrc4ww"
                                 
+                        401:
+                            description: "Invalid credentials"
+                    
+                        
         securityDefinitions:
             BearerAuth:
                 type: "apiKey"
@@ -188,6 +267,60 @@ nelmio_api_doc:
                       lastname: "Dufour"
                     - id: 2
                       lastname: "Potier"
+
+            Mobile:
+                type: "object"
+                properties:
+                    id:
+                        type: "integer"
+                        example: 2
+                    name:
+                        type: "string"
+                        example: "BileMo Max"
+                    price:
+                        type: "integer"
+                        example: 1277.09
+                    description:
+                        type: "string"
+                        example: "Tenetur voluptatem dolores quos est ipsam. Ut aut assumenda voluptatem. Architecto beatae ad omnis sit architecto ullam. Quidem dicta sequi quia in consequatur. Omnis et nihil rerum nostrum est fuga porro tempora. Cumque omnis optio fugit et. Dolore rem recusandae debitis nobis qui quia aspernatur. Repellat repellat impedit minima adipisci id nostrum. Voluptatem doloribus voluptatem quo minus nobis enim fuga."
+                    color:
+                        type: "string"
+                        example: "teal"
+                    memory:
+                        type: "integer"
+                        example: 32
+                    screen:
+                        type: "integer"
+                        example: 5
+                    
+            ArrayOfMobiles:
+                type: "array"
+                items:
+                    type: object
+                    properties:
+                    id:
+                        type: "integer"
+                    name:
+                        type: "string"
+                example:
+                    - id: 1
+                      name: "Basic BileMo"
+                    - id: 2
+                      name: "BileMo Max"
+                    - id: 3
+                      name: "BileMo 9"
+                    - id: 4
+                      name: "BileMo Special Edition"
+                            
+            Loggin:
+                type: "object"
+                properties:
+                    username:
+                        type: "string"
+                        example: "SFR"
+                    password:
+                        type: "string"
+                        example: "motdepasse"
 
 
     areas: # to filter documented areas
