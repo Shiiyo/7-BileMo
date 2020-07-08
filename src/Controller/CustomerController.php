@@ -9,16 +9,23 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Normalizer\Normalizer as Normalizer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
+use Symfony\Component\Routing\Annotation\Route;
+
 class CustomerController extends AbstractController
 {
     /**
+     * Describe the user asked
+     * 
      * @Route("/customers/{id}", name="customer_show", methods={"GET"}, requirements={"id"="\d+"})
+     * 
      */
     public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id, UserInterface $user)
     {
@@ -66,7 +73,7 @@ class CustomerController extends AbstractController
         $manager->persist($newCustomer);
         $manager->flush();
 
-        return new Response("Customer created !", 201);
+        return new Response("Utilisateur créé !", 201);
     }
 
     /**
@@ -97,7 +104,7 @@ class CustomerController extends AbstractController
         $manager->persist($oldCustomer);
         $manager->flush();
 
-        return new Response("Customer updated !", 200);
+        return new Response("Utilisateur mis à jour !", 200);
     }
 
     /**
@@ -113,7 +120,7 @@ class CustomerController extends AbstractController
         $manager->remove($customer);
         $manager->flush();
 
-        return new Response("Customer deleted !", 200);
+        return new Response("Utilisateur supprimé !", 200);
     }
 }
 
