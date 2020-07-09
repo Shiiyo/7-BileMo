@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use App\DTO\MobileDTO;
 use App\Repository\MobileRepository;
+use App\HATEOAS\MobileHATEOASGenerator;
 use App\Normalizer\Normalizer as Normalizer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -17,11 +20,16 @@ class MobileController extends AbstractController
     /**
      * @Route("/mobiles/{id}", name="mobile_show", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function showAction(SerializerInterface $serializer, MobileRepository $repo, $id)
+    public function showAction(SerializerInterface $serializer, MobileRepository $repo, $id, UrlGeneratorInterface $router)
     {
         $mobile = $repo->findOneById($id);
 
-        $data = $serializer->serialize($mobile, 'json');
+        //Add links
+        $HATEOASGenerator = new MobileHATEOASGenerator($router, $mobile);
+        $HATEOASGenerator->listLink();
+        $mobileDTO = new MobileDTO($mobile);
+
+        $data = $serializer->serialize($mobileDTO, 'json');
 
         return new Response($data, 200, ['Content-Type', 'application/json']);
     }

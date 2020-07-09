@@ -41,6 +41,8 @@ class Customer
      */
     private $user;
 
+    public $links;    
+
     public function getId(): ?int
     {
         return $this->id;
