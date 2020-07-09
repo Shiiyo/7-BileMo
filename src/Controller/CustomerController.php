@@ -11,6 +11,7 @@ use App\Normalizer\Normalizer as Normalizer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -43,7 +44,10 @@ class CustomerController extends AbstractController
             throw new NotFoundHttpException("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
         }
 
-        return new Response($data, 200, ['Content-Type', 'application/json']);
+        $response = new JsonResponse($data, 200, [], true);
+        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+
+        return $response;
     }
 
     /**
@@ -89,7 +93,10 @@ class CustomerController extends AbstractController
         $customerDTO = new CustomerDTO($newCustomer);
         $data = $serializer->serialize($customerDTO, 'json');
 
-        return new Response($data, 201, ['Content-Type', 'application/json']);
+        $response = new JsonResponse($data, 201, [], true);
+        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+
+        return $response;
     }
 
     /**
@@ -129,7 +136,10 @@ class CustomerController extends AbstractController
         $customerDTO = new CustomerDTO($oldCustomer);
         $data = $serializer->serialize($customerDTO, 'json');
 
-        return new Response($data, 200, ['Content-Type', 'application/json']);
+        $response = new JsonResponse($data, 200, [], true);
+        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+
+        return $response;
     }
 
     /**
