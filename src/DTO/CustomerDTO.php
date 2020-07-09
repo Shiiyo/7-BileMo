@@ -11,6 +11,7 @@ class CustomerDTO
     private $lastName;
     private $firstName;
     private $email;
+    private $links;
 
     public function __construct(Customer $customer)
     {
@@ -19,11 +20,12 @@ class CustomerDTO
         $this->setLastName($customer->getLastName());
         $this->setFirstName($customer->getFirstName());
         $this->setEmail($customer->getEmail());
+        $this->setLinks($customer->links);
     }
 
     /**
      * Get the value of id
-     */ 
+     */
     public function getId()
     {
         return $this->id;
@@ -33,7 +35,7 @@ class CustomerDTO
      * Set the value of id
      *
      * @return  self
-     */ 
+     */
     public function setId($id)
     {
         $this->id = $id;
@@ -43,7 +45,7 @@ class CustomerDTO
 
     /**
      * Get the value of Owner
-     */ 
+     */
     public function getOwner()
     {
         return $this->Owner;
@@ -53,7 +55,7 @@ class CustomerDTO
      * Set the value of Owner
      *
      * @return  self
-     */ 
+     */
     public function setOwner($Owner)
     {
         $this->Owner = $Owner;
@@ -63,7 +65,7 @@ class CustomerDTO
 
     /**
      * Get the value of lastName
-     */ 
+     */
     public function getLastName()
     {
         return $this->lastName;
@@ -73,7 +75,7 @@ class CustomerDTO
      * Set the value of lastName
      *
      * @return  self
-     */ 
+     */
     public function setLastName($lastName)
     {
         $this->lastName = $lastName;
@@ -83,7 +85,7 @@ class CustomerDTO
 
     /**
      * Get the value of firstName
-     */ 
+     */
     public function getFirstName()
     {
         return $this->firstName;
@@ -93,7 +95,7 @@ class CustomerDTO
      * Set the value of firstName
      *
      * @return  self
-     */ 
+     */
     public function setFirstName($firstName)
     {
         $this->firstName = $firstName;
@@ -103,7 +105,7 @@ class CustomerDTO
 
     /**
      * Get the value of email
-     */ 
+     */
     public function getEmail()
     {
         return $this->email;
@@ -113,10 +115,30 @@ class CustomerDTO
      * Set the value of email
      *
      * @return  self
-     */ 
+     */
     public function setEmail($email)
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of links
+     */
+    public function getLinks()
+    {
+        return $this->links;
+    }
+
+    /**
+     * Set the value of links
+     *
+     * @return  self
+     */
+    public function setLinks($links)
+    {
+        $this->links = $links;
 
         return $this;
     }

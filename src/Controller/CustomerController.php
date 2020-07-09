@@ -6,18 +6,17 @@ use App\DTO\CustomerDTO;
 use App\Entity\Customer;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\HATEOAS\CustomerHATEOASGenerator;
 use App\Normalizer\Normalizer as Normalizer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\User\UserInterface;
-
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
-use Swagger\Annotations as SWG;
-use Symfony\Component\Routing\Annotation\Route;
 
 class CustomerController extends AbstractController
 {
@@ -27,10 +26,17 @@ class CustomerController extends AbstractController
      * @Route("/customers/{id}", name="customer_show", methods={"GET"}, requirements={"id"="\d+"})
      * 
      */
-    public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id, UserInterface $user)
+    public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id, UserInterface $user, UrlGeneratorInterface $router)
     {
         $customer = $repo->findOneByIdCustomUser($id, $user);
         if($customer !== null){
+            //Add links
+            $HATEOASGenerator = new CustomerHATEOASGenerator($router, $customer);
+            $HATEOASGenerator->listLink();
+            $HATEOASGenerator->modifyLink();
+            $HATEOASGenerator->deleteLink();
+            
+            //Create Customer DTO
             $customerDTO = new CustomerDTO($customer);
             $data = $serializer->serialize($customerDTO, 'json');
         }
@@ -38,7 +44,10 @@ class CustomerController extends AbstractController
             throw new NotFoundHttpException("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
         }
 
-        return new Response($data, 200, ['Content-Type', 'application/json']);
+        $response = new JsonResponse($data, 200, [], true);
+        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+
+        return $response;
     }
 
     /**
@@ -67,19 +76,33 @@ class CustomerController extends AbstractController
     /**
      * @Route("/customers", name="customer_create", methods={"POST"})
      */
-    public function createAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager)
+    public function createAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, UrlGeneratorInterface $router, UserInterface $user)
     {
         $newCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json');
+        $newCustomer->setUser($user);
         $manager->persist($newCustomer);
         $manager->flush();
 
-        return new Response("Utilisateur créé !", 201);
+        //Add links
+        $HATEOASGenerator = new CustomerHATEOASGenerator($router, $newCustomer);
+        $HATEOASGenerator->selfLink();
+        $HATEOASGenerator->modifyLink();
+        $HATEOASGenerator->deleteLink();
+
+        //Create Customer DTO
+        $customerDTO = new CustomerDTO($newCustomer);
+        $data = $serializer->serialize($customerDTO, 'json');
+
+        $response = new JsonResponse($data, 201, [], true);
+        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+
+        return $response;
     }
 
     /**
      * @Route("/customers/{id}", name="customer_update", methods={"PUT"}, requirements={"id"="\d+"})
      */
-    public function updateAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, CustomerRepository $repo, $id, UserInterface $user)
+    public function updateAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, CustomerRepository $repo, $id, UserInterface$user, UrlGeneratorInterface $router)
     {
         $updateCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json');
 
@@ -104,7 +127,19 @@ class CustomerController extends AbstractController
         $manager->persist($oldCustomer);
         $manager->flush();
 
-        return new Response("Utilisateur mis à jour !", 200);
+        //Add links
+        $HATEOASGenerator = new CustomerHATEOASGenerator($router, $oldCustomer);
+        $HATEOASGenerator->selfLink();
+        $HATEOASGenerator->deleteLink();
+
+        //Create Customer DTO
+        $customerDTO = new CustomerDTO($oldCustomer);
+        $data = $serializer->serialize($customerDTO, 'json');
+
+        $response = new JsonResponse($data, 200, [], true);
+        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+
+        return $response;
     }
 
     /**

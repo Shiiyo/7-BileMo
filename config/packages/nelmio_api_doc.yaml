@@ -56,7 +56,25 @@ nelmio_api_doc:
 
                     responses:
                         201:
-                            description: "Utilisateur créé !"
+                            description: "Utilisateur créé"
+                            schema:
+                                allOf:
+                                    - $ref : "#/definitions/Customer"
+                                    - properties:
+                                        links:
+                                            type: "array"
+                                            items:
+                                                type: "object"
+                                                properties:
+                                                    self:
+                                                        type: "string"
+                                                        example: "string"
+                                                    modify:
+                                                        type: "string"
+                                                        example: "string"
+                                                    delete:
+                                                        type: "string"
+                                                        example: "string"
                     security:
                         - BearerAuth: []
 
@@ -78,7 +96,24 @@ nelmio_api_doc:
                         200:
                             description: Un tableau JSON décrivant l'utilisateur
                             schema:
-                                $ref: "#/definitions/CustomerDetail"
+                                type: object
+                                allOf:
+                                    - $ref: "#/definitions/CustomerDetail"
+                                    - properties:
+                                        links:
+                                            type: "array"
+                                            items:
+                                                type: "object"
+                                                properties:
+                                                    list:
+                                                        type: "string"
+                                                        example: "string"
+                                                    modify:
+                                                        type: "string"
+                                                        example: "string"
+                                                    delete:
+                                                        type: "string"
+                                                        example: "string"
                     security:
                         - BearerAuth: []
             
@@ -103,7 +138,23 @@ nelmio_api_doc:
                             $ref: "#/definitions/Customer"
                     responses:
                         200:
-                            description: Utilisateur mis à jour !
+                            description: Utilisateur mis à jour
+                            schema:
+                                type: object
+                                allOf:
+                                    - $ref: "#/definitions/CustomerDetail"
+                                    - properties:
+                                        links:
+                                            type: "array"
+                                            items:
+                                                type: "object"
+                                                properties:
+                                                    self:
+                                                        type: "string"
+                                                        example: "string"
+                                                    delete:
+                                                        type: "string"
+                                                        example: "string"
                         404:
                             description: L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.
                     security:
@@ -176,7 +227,18 @@ nelmio_api_doc:
                         200:
                             description: Un tableau JSON décrivant le téléphone
                             schema:
-                                $ref: "#/definitions/Mobile"
+                                type: object
+                                allOf:
+                                    - $ref: "#/definitions/Mobile"
+                                    - properties:
+                                        links:
+                                            type: "array"
+                                            items:
+                                                type: "object"
+                                                properties:
+                                                    list:
+                                                        type: "string"
+                                                        example: "string"
                     security:
                         - BearerAuth: []
                 

@@ -49,6 +49,8 @@ class Mobile
      */
     private $screen;
 
+    public $links;
+
     public function getId(): ?int
     {
         return $this->id;
