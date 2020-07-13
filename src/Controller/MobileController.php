@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\DTO\MobileDTO;
 use App\Repository\MobileRepository;
 use App\HATEOAS\MobileHATEOASGenerator;
-use App\Normalizer\Normalizer as Normalizer;
+use App\Normalizer as Normalizer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,6 +34,8 @@ class MobileController extends AbstractController
 
         $response = new JsonResponse($data, 200, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $response->setPublic();
+        $response->setMaxAge(3500);
 
         return $response;
     }
@@ -60,6 +62,8 @@ class MobileController extends AbstractController
 
         $response = new JsonResponse($jsonData, 200, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $response->setPublic();
+        $response->setMaxAge(3500);
 
         return $response;
     }

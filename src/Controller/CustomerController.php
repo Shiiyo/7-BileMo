@@ -7,7 +7,7 @@ use App\Entity\Customer;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\HATEOAS\CustomerHATEOASGenerator;
-use App\Normalizer\Normalizer as Normalizer;
+use App\Normalizer as Normalizer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -46,6 +46,8 @@ class CustomerController extends AbstractController
 
         $response = new JsonResponse($data, 200, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $response->setPublic();
+        $response->setMaxAge(3500);
 
         return $response;
     }
@@ -70,7 +72,11 @@ class CustomerController extends AbstractController
         $data = $normalizer->normalize($page, 'list');
         $jsonData = $serializer->serialize($data, 'json');
 
-        return new Response($jsonData, 200, ['Content-Type', 'application/json']);
+        $response = new Response($jsonData, 200, ['Content-Type', 'application/json']);
+        $response->setPublic();
+        $response->setMaxAge(3500);
+
+        return $response;
     }
 
     /**
@@ -95,6 +101,8 @@ class CustomerController extends AbstractController
 
         $response = new JsonResponse($data, 201, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $response->setPublic();
+        $response->setMaxAge(3500);
 
         return $response;
     }
@@ -138,6 +146,8 @@ class CustomerController extends AbstractController
 
         $response = new JsonResponse($data, 200, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $response->setPublic();
+        $response->setMaxAge(3500);
 
         return $response;
     }
@@ -155,7 +165,10 @@ class CustomerController extends AbstractController
         $manager->remove($customer);
         $manager->flush();
 
-        return new Response("Utilisateur supprimé !", 200);
+        $response = new Response("Utilisateur supprimé !", 200);
+        $response->setPublic();
+        $response->setMaxAge(3500);
+        return $response;
     }
 }
 

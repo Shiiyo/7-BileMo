@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Normalizer;
+namespace App;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
