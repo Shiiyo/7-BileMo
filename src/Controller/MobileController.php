@@ -68,7 +68,6 @@ class MobileController extends AbstractController
             return $response;
         }
 
-
         $page = $repo->getMobilePage($offset, $nbResult);
 
         $normalizer = new Normalizer;
@@ -77,8 +76,10 @@ class MobileController extends AbstractController
 
         $response = new JsonResponse($jsonData, 200, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $response->setEtag(md5($response->getContent()));
         $response->setPublic();
-        $response->setMaxAge(3500);
+        $response->setMaxAge(10);
+        $response->isNotModified($request);
 
         return $response;
     }
