@@ -24,7 +24,8 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
-        "symfony/maker-bundle": "^1.18"
+        "symfony/maker-bundle": "^1.18",
+        "symfony/phpunit-bridge": "^5.1"
     },
     "config": {
         "preferred-install": {
