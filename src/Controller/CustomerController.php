@@ -69,7 +69,7 @@ class CustomerController extends AbstractController
 
         try {
             if ($offset > $totalPage || $offset <= 0) {
-                throw new Exception("La page n'existe pas");
+                throw new Exception("La page n'existe pas.");
             }
         } catch (Exception $e) {
             $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
@@ -108,7 +108,7 @@ class CustomerController extends AbstractController
                 throw new Exception($errorsString);
             }
         } catch (Exception $e) {
-            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
+            $response = new Response("Erreur: " . $e->getMessage(), 400, [], true);
             return $response;
         }
 
