@@ -8,6 +8,7 @@ use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\HATEOAS\CustomerHATEOASGenerator;
 use App\Normalizer as Normalizer;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,21 +29,25 @@ class CustomerController extends AbstractController
      */
     public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id, UserInterface $user, UrlGeneratorInterface $router)
     {
-        $customer = $repo->findOneByIdCustomUser($id, $user);
-        if($customer !== null){
-            //Add links
-            $HATEOASGenerator = new CustomerHATEOASGenerator($router, $customer);
-            $HATEOASGenerator->listLink();
-            $HATEOASGenerator->modifyLink();
-            $HATEOASGenerator->deleteLink();
-            
-            //Create Customer DTO
-            $customerDTO = new CustomerDTO($customer);
-            $data = $serializer->serialize($customerDTO, 'json');
+        try {
+            $customer = $repo->findOneByIdCustomUser($id, $user);
+            if ($customer == null) {
+                throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
+            }
+        } catch (Exception $e) {
+            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
+            return $response;
         }
-        else{
-            throw new NotFoundHttpException("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
-        }
+
+        //Add links
+        $HATEOASGenerator = new CustomerHATEOASGenerator($router, $customer);
+        $HATEOASGenerator->listLink();
+        $HATEOASGenerator->modifyLink();
+        $HATEOASGenerator->deleteLink();
+
+        //Create Customer DTO
+        $customerDTO = new CustomerDTO($customer);
+        $data = $serializer->serialize($customerDTO, 'json');
 
         $response = new JsonResponse($data, 200, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
@@ -62,9 +67,16 @@ class CustomerController extends AbstractController
         $nbResult =  max(2, $request->get('nbResult'));
         $totalPage = $repo->findMaxNbOfPage($nbResult, $user);
 
-        if ($offset > $totalPage || $offset <= 0) {
-            throw new NotFoundHttpException("La page n'existe pas");
+        try {
+            if ($offset > $totalPage || $offset <= 0) {
+                throw new Exception("La page n'existe pas");
+            }
+        } catch (Exception $e) {
+            if ($offset > $totalPage || $offset <= 0) {
+                throw new NotFoundHttpException("La page n'existe pas");
+            }
         }
+
 
         $page = $repo->getCustomerPage($offset, $nbResult, $user);
 
@@ -114,12 +126,16 @@ class CustomerController extends AbstractController
     {
         $updateCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json');
 
-        $oldCustomer = $repo->findOneByIdCustomUser($id, $user);
-
-        if ($oldCustomer == null) {
-            throw new NotFoundHttpException("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
+        try {
+            $oldCustomer = $repo->findOneByIdCustomUser($id, $user);
+            if ($oldCustomer == null) {
+                throw new NotFoundHttpException("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
+            }
+        } catch (Exception $e) {
+            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
+            return $response;
         }
-
+        
         if($updateCustomer->getLastName() !== null AND $updateCustomer->getLastName() !== $oldCustomer->getLastName()){
             $oldCustomer->setLastName($updateCustomer->getLastName());
         }
@@ -157,11 +173,17 @@ class CustomerController extends AbstractController
      */
     public function deleteAction($id, EntityManagerInterface $manager, CustomerRepository $repo, UserInterface $user)
     {
-        $customer = $repo->findOneByIdCustomUser($id, $user);
+        try {
+            $customer = $repo->findOneByIdCustomUser($id, $user);
 
-        if ($customer == null) {
-            throw new NotFoundHttpException("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
+            if ($customer == null) {
+                throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
+            }
+        } catch (Exception $e) {
+            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
+            return $response;
         }
+
         $manager->remove($customer);
         $manager->flush();
 

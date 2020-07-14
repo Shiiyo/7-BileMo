@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\DTO\MobileDTO;
+use App\Normalizer as Normalizer;
 use App\Repository\MobileRepository;
 use App\HATEOAS\MobileHATEOASGenerator;
-use App\Normalizer as Normalizer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,7 +14,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
 class MobileController extends AbstractController
@@ -23,7 +23,16 @@ class MobileController extends AbstractController
      */
     public function showAction(SerializerInterface $serializer, MobileRepository $repo, $id, UrlGeneratorInterface $router)
     {
-        $mobile = $repo->findOneById($id);
+        try{
+            $mobile = $repo->findOneById($id);
+
+            if ($mobile === null) {
+                throw new Exception("Ce mobile n'existe pas");
+            }
+        } catch(Exception $e) {
+            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
+            return $response;
+        }
 
         //Add links
         $HATEOASGenerator = new MobileHATEOASGenerator($router, $mobile);
@@ -50,9 +59,15 @@ class MobileController extends AbstractController
         $nbResult =  max(2, $request->get('nbResult'));
         $totalPage = $repo->findMaxNbOfPage($nbResult);
 
-        if($offset > $totalPage || $offset <= 0) {
-            throw new NotFoundHttpException("La page n'existe pas");
+        try{
+            if($offset > $totalPage || $offset <= 0) {
+                throw new Exception("La page n'existe pas");
+            }
+        } catch(Exception $e) {
+            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
+            return $response;
         }
+
 
         $page = $repo->getMobilePage($offset, $nbResult);
 
