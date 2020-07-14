@@ -2,22 +2,22 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\DTO\CustomerDTO;
 use App\Entity\Customer;
+use App\Normalizer as Normalizer;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\HATEOAS\CustomerHATEOASGenerator;
-use App\Normalizer as Normalizer;
-use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CustomerController extends AbstractController
 {
@@ -72,9 +72,8 @@ class CustomerController extends AbstractController
                 throw new Exception("La page n'existe pas");
             }
         } catch (Exception $e) {
-            if ($offset > $totalPage || $offset <= 0) {
-                throw new NotFoundHttpException("La page n'existe pas");
-            }
+            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
+            return $response;
         }
 
 
@@ -94,10 +93,25 @@ class CustomerController extends AbstractController
     /**
      * @Route("/customers", name="customer_create", methods={"POST"})
      */
-    public function createAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, UrlGeneratorInterface $router, UserInterface $user)
+    public function createAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, UrlGeneratorInterface $router, UserInterface $user, ValidatorInterface $validator)
     {
         $newCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json');
         $newCustomer->setUser($user);
+
+        try {
+            $errors = $validator->validate($newCustomer);
+            if (count($errors) > 0) {
+                $errorsString = "";
+                foreach($errors as $error){
+                    $errorsString .= "- " . $error->getMessage(). " ";
+                }
+                throw new Exception($errorsString);
+            }
+        } catch (Exception $e) {
+            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
+            return $response;
+        }
+
         $manager->persist($newCustomer);
         $manager->flush();
 
@@ -129,22 +143,22 @@ class CustomerController extends AbstractController
         try {
             $oldCustomer = $repo->findOneByIdCustomUser($id, $user);
             if ($oldCustomer == null) {
-                throw new NotFoundHttpException("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
+                throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
             }
         } catch (Exception $e) {
             $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
             return $response;
         }
         
-        if($updateCustomer->getLastName() !== null AND $updateCustomer->getLastName() !== $oldCustomer->getLastName()){
+        if($updateCustomer->getLastName() !== null ){
             $oldCustomer->setLastName($updateCustomer->getLastName());
         }
 
-        if ($updateCustomer->getFirstName() !== null and $updateCustomer->getFirstName() !== $oldCustomer->getFirstName()) {
+        if ($updateCustomer->getFirstName() !== null) {
             $oldCustomer->setFirstName($updateCustomer->getFirstName());
         }
 
-        if ($updateCustomer->getEmail() !== null and $updateCustomer->getEmail() !== $oldCustomer->getEmail()) {
+        if ($updateCustomer->getEmail() !== null) {
             $oldCustomer->setEmail($updateCustomer->getEmail());
         }
 
