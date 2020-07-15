@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Exception;
+use App\Responder;
 use App\DTO\CustomerDTO;
 use App\Entity\Customer;
 use App\Normalizer as Normalizer;
@@ -49,12 +50,8 @@ class CustomerController extends AbstractController
         $customerDTO = new CustomerDTO($customer);
         $data = $serializer->serialize($customerDTO, 'json');
 
-        $response = new JsonResponse($data, 200, [], true);
-        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
-        $response->setEtag(md5($response->getContent()));
-        $response->setPublic();
-        $response->setMaxAge(3500);
-        $response->isNotModified($request);
+        $responder = new Responder;
+        $response = $responder->createReponse($request, $data, 200);
 
         return $response;
     }
@@ -85,11 +82,8 @@ class CustomerController extends AbstractController
         $data = $normalizer->normalize($page, 'list');
         $jsonData = $serializer->serialize($data, 'json');
 
-        $response = new Response($jsonData, 200, ['Content-Type', 'application/json']);
-        $response->setEtag(md5($response->getContent()));
-        $response->setPublic();
-        $response->setMaxAge(3500);
-        $response->isNotModified($request);
+        $responder = new Responder;
+        $response = $responder->createReponse($request, $jsonData, 200);
 
         return $response;
     }
@@ -129,8 +123,8 @@ class CustomerController extends AbstractController
         $customerDTO = new CustomerDTO($newCustomer);
         $data = $serializer->serialize($customerDTO, 'json');
 
-        $response = new JsonResponse($data, 201, [], true);
-        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $responder = new Responder;
+        $response = $responder->createReponse($request, $data, 201);
 
         return $response;
     }
@@ -176,8 +170,8 @@ class CustomerController extends AbstractController
         $customerDTO = new CustomerDTO($oldCustomer);
         $data = $serializer->serialize($customerDTO, 'json');
 
-        $response = new JsonResponse($data, 200, [], true);
-        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $responder = new Responder;
+        $response = $responder->createReponse($request, $data, 200);
 
         return $response;
     }
