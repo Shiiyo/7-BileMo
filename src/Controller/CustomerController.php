@@ -27,7 +27,7 @@ class CustomerController extends AbstractController
      * @Route("/customers/{id}", name="customer_show", methods={"GET"}, requirements={"id"="\d+"})
      * 
      */
-    public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id, UserInterface $user, UrlGeneratorInterface $router)
+    public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id, UserInterface $user, UrlGeneratorInterface$router, Request $request)
     {
         try {
             $customer = $repo->findOneByIdCustomUser($id, $user);
@@ -51,8 +51,10 @@ class CustomerController extends AbstractController
 
         $response = new JsonResponse($data, 200, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $response->setEtag(md5($response->getContent()));
         $response->setPublic();
         $response->setMaxAge(3500);
+        $response->isNotModified($request);
 
         return $response;
     }
@@ -84,8 +86,10 @@ class CustomerController extends AbstractController
         $jsonData = $serializer->serialize($data, 'json');
 
         $response = new Response($jsonData, 200, ['Content-Type', 'application/json']);
+        $response->setEtag(md5($response->getContent()));
         $response->setPublic();
         $response->setMaxAge(3500);
+        $response->isNotModified($request);
 
         return $response;
     }
@@ -127,8 +131,6 @@ class CustomerController extends AbstractController
 
         $response = new JsonResponse($data, 201, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
-        $response->setPublic();
-        $response->setMaxAge(3500);
 
         return $response;
     }
@@ -176,8 +178,6 @@ class CustomerController extends AbstractController
 
         $response = new JsonResponse($data, 200, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
-        $response->setPublic();
-        $response->setMaxAge(3500);
 
         return $response;
     }
@@ -202,8 +202,6 @@ class CustomerController extends AbstractController
         $manager->flush();
 
         $response = new Response("Utilisateur supprimé !", 200);
-        $response->setPublic();
-        $response->setMaxAge(3500);
         return $response;
     }
 }
