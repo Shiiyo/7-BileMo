@@ -24,9 +24,9 @@ class CustomerController extends AbstractController
 {
     /**
      * Describe the user asked
-     * 
+     *
      * @Route("/customers/{id}", name="customer_show", methods={"GET"}, requirements={"id"="\d+"})
-     * 
+     *
      */
     public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id, UserInterface $user, UrlGeneratorInterface$router, Request $request)
     {
@@ -100,7 +100,7 @@ class CustomerController extends AbstractController
             $errors = $validator->validate($newCustomer);
             if (count($errors) > 0) {
                 $errorsString = "";
-                foreach($errors as $error){
+                foreach ($errors as $error) {
                     $errorsString .= "- " . $error->getMessage(). " ";
                 }
                 throw new Exception($errorsString);
@@ -146,7 +146,7 @@ class CustomerController extends AbstractController
             return $response;
         }
         
-        if($updateCustomer->getLastName() !== null ){
+        if ($updateCustomer->getLastName() !== null) {
             $oldCustomer->setLastName($updateCustomer->getLastName());
         }
 
@@ -199,4 +199,3 @@ class CustomerController extends AbstractController
         return $response;
     }
 }
-

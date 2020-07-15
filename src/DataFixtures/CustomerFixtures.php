@@ -13,7 +13,7 @@ class CustomerFixtures extends Fixture
         $faker = \Faker\Factory::create('fr_FR');
 
         $userArray = $manager->getRepository('App\Entity\User')->findAll();
-        foreach($userArray as $user){
+        foreach ($userArray as $user) {
             for ($i = 1; $i <= 6; $i++) {
                 $customer = new Customer();
 
@@ -29,4 +29,3 @@ class CustomerFixtures extends Fixture
         }
     }
 }
-

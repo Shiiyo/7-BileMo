@@ -31,4 +31,3 @@ class UserController extends AbstractController
         return new Response("User created !", 201);
     }
 }
-

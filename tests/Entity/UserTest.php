@@ -25,7 +25,7 @@ class UserTest extends TestCase
     public function testRoles()
     {
         $role[] = 'ROLE_USER';
-        $this->assertSame($role , $this->user->getRoles());
+        $this->assertSame($role, $this->user->getRoles());
     }
 
     public function testPassword()

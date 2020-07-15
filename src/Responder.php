@@ -12,7 +12,7 @@ class Responder
         $response = new JsonResponse($data, $httpCode, [], true);
         $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
         
-        if ($request->isMethodCacheable()){
+        if ($request->isMethodCacheable()) {
             $response->setEtag(md5($response->getContent()));
             $response->setPublic();
             $response->setMaxAge(3500);

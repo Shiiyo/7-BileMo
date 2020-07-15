@@ -16,7 +16,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-
 class MobileController extends AbstractController
 {
     /**
@@ -24,13 +23,13 @@ class MobileController extends AbstractController
      */
     public function showAction(SerializerInterface $serializer, MobileRepository $repo, $id, UrlGeneratorInterface$router, Request $request)
     {
-        try{
+        try {
             $mobile = $repo->findOneById($id);
 
             if ($mobile === null) {
                 throw new Exception("Ce mobile n'existe pas.");
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
             return $response;
         }
@@ -58,11 +57,11 @@ class MobileController extends AbstractController
         $nbResult =  max(2, $request->get('nbResult'));
         $totalPage = $repo->findMaxNbOfPage($nbResult);
 
-        try{
-            if($offset > $totalPage || $offset <= 0) {
+        try {
+            if ($offset > $totalPage || $offset <= 0) {
                 throw new Exception("La page n'existe pas.");
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
             return $response;
         }

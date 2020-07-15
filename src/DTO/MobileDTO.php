@@ -29,7 +29,7 @@ class MobileDTO
 
     /**
      * Get the value of id
-     */ 
+     */
     public function getId()
     {
         return $this->id;
@@ -39,7 +39,7 @@ class MobileDTO
      * Set the value of id
      *
      * @return  self
-     */ 
+     */
     public function setId($id)
     {
         $this->id = $id;
@@ -49,7 +49,7 @@ class MobileDTO
 
     /**
      * Get the value of name
-     */ 
+     */
     public function getName()
     {
         return $this->name;
@@ -59,7 +59,7 @@ class MobileDTO
      * Set the value of name
      *
      * @return  self
-     */ 
+     */
     public function setName($name)
     {
         $this->name = $name;
@@ -69,7 +69,7 @@ class MobileDTO
 
     /**
      * Get the value of price
-     */ 
+     */
     public function getPrice()
     {
         return $this->price;
@@ -79,7 +79,7 @@ class MobileDTO
      * Set the value of price
      *
      * @return  self
-     */ 
+     */
     public function setPrice($price)
     {
         $this->price = $price;
@@ -89,7 +89,7 @@ class MobileDTO
 
     /**
      * Get the value of description
-     */ 
+     */
     public function getDescription()
     {
         return $this->description;
@@ -99,7 +99,7 @@ class MobileDTO
      * Set the value of description
      *
      * @return  self
-     */ 
+     */
     public function setDescription($description)
     {
         $this->description = $description;
@@ -109,7 +109,7 @@ class MobileDTO
 
     /**
      * Get the value of color
-     */ 
+     */
     public function getColor()
     {
         return $this->color;
@@ -119,7 +119,7 @@ class MobileDTO
      * Set the value of color
      *
      * @return  self
-     */ 
+     */
     public function setColor($color)
     {
         $this->color = $color;
@@ -129,7 +129,7 @@ class MobileDTO
 
     /**
      * Get the value of memory
-     */ 
+     */
     public function getMemory()
     {
         return $this->memory;
@@ -139,7 +139,7 @@ class MobileDTO
      * Set the value of memory
      *
      * @return  self
-     */ 
+     */
     public function setMemory($memory)
     {
         $this->memory = $memory;
@@ -149,7 +149,7 @@ class MobileDTO
 
     /**
      * Get the value of screen
-     */ 
+     */
     public function getScreen()
     {
         return $this->screen;
@@ -159,7 +159,7 @@ class MobileDTO
      * Set the value of screen
      *
      * @return  self
-     */ 
+     */
     public function setScreen($screen)
     {
         $this->screen = $screen;
@@ -169,7 +169,7 @@ class MobileDTO
 
     /**
      * Get the value of links
-     */ 
+     */
     public function getLinks()
     {
         return $this->links;
@@ -179,7 +179,7 @@ class MobileDTO
      * Set the value of links
      *
      * @return  self
-     */ 
+     */
     public function setLinks($links)
     {
         $this->links = $links;
@@ -187,4 +187,3 @@ class MobileDTO
         return $this;
     }
 }
-

@@ -33,8 +33,7 @@ class MobileFixtures extends Fixture
     {
         $faker = \Faker\Factory::create('fr_FR');
         
-        foreach ($this->getNames() as $name)
-        {
+        foreach ($this->getNames() as $name) {
             $mobile = new Mobile();
 
             $mobile->setName($name);
@@ -42,7 +41,7 @@ class MobileFixtures extends Fixture
             $mobile->setDescription($faker->paragraph(8));
             $mobile->setColor($faker->safeColorName);
             $mobile->setMemory($faker->randomElement($this->getMemory()));
-            $mobile->setScreen($faker->numberBetween(4,9));
+            $mobile->setScreen($faker->numberBetween(4, 9));
 
             $manager->persist($mobile);
         }
@@ -50,7 +49,7 @@ class MobileFixtures extends Fixture
 
     /**
      * Get the value of names
-     */ 
+     */
     public function getNames()
     {
         return $this->names;
@@ -58,10 +57,9 @@ class MobileFixtures extends Fixture
 
     /**
      * Get the value of memory
-     */ 
+     */
     public function getMemory()
     {
         return $this->memory;
     }
 }
-
