@@ -13,7 +13,6 @@ use App\HATEOAS\CustomerHATEOASGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -79,11 +78,15 @@ class CustomerController extends AbstractController
         $page = $repo->getCustomerPage($offset, $nbResult, $user);
 
         $normalizer = new Normalizer;
-        $data = $normalizer->normalize($page, 'list');
-        $jsonData = $serializer->serialize($data, 'json');
+        $pageData = $normalizer->normalize($page, 'list');
+        $jsonData = $serializer->serialize($pageData, 'json');
+
+        //Add page's indication
+        $pagesIndication[] = ["pageIndication" => "Vous êtes à la page " . $offset . " sur " . $totalPage];
+        $data = json_encode(array_merge(json_decode($jsonData, true), $pagesIndication));
 
         $responder = new Responder;
-        $response = $responder->createReponse($request, $jsonData, 200);
+        $response = $responder->createReponse($request, $data, 200);
 
         return $response;
     }
