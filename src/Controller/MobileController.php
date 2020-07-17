@@ -53,12 +53,12 @@ class MobileController extends AbstractController
     public function listAction(SerializerInterface $serializer, MobileRepository $repo, Request $request)
     {
         //Paging
-        $offset = max(0, $request->get('offset'));
+        $offset = max(1, $request->get('offset'));
         $nbResult =  max(2, $request->get('nbResult'));
         $totalPage = $repo->findMaxNbOfPage($nbResult);
 
         try {
-            if ($offset > $totalPage || $offset <= 0) {
+            if ($offset > $totalPage) {
                 throw new Exception("La page n'existe pas.");
             }
         } catch (Exception $e) {
