@@ -31,6 +31,9 @@ Then run this to generate fake data into the DB:<br/>
 Lunch the server with:<br/>
 <code>symfony server:start -d</code>
 
+# Documentation
+The documentation of the API is available on the url <code> /api/doc </code>
+
 # Login
 If you want to use the API you will need a token. To generate it you will have to send a request to the /login_check route:</br>
 <code>curl --request POST \
@@ -40,6 +43,7 @@ If you want to use the API you will need a token. To generate it you will have t
   </br>
   For each request you just have to add on the headers the token like this:
   <code>authorization: Bearer token</code>
+
 # Tests
 For lunch test you just have to run this command:</br>
 <code>./vendor/bin/simple-phpunit</code>
