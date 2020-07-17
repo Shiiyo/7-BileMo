@@ -43,3 +43,6 @@ If you want to use the API you will need a token. To generate it you will have t
 # Tests
 For lunch test you just have to run this command:</br>
 <code>./vendor/bin/simple-phpunit</code>
+
+# UML diagrams
+All the UML diagrams are saved in the <code>/public/diagrams </code> folder.
