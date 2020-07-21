@@ -21,8 +21,10 @@ class MobileController extends AbstractController
     /**
      * @Route("/mobiles/{id}", name="mobile_show", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function showAction(SerializerInterface $serializer, MobileRepository $repo, $id, UrlGeneratorInterface$router, Request $request)
+    public function showAction(SerializerInterface $serializer, MobileRepository $repo, UrlGeneratorInterface$router, Request $request)
     {
+        $id = $request->get('id');
+        
         try {
             $mobile = $repo->findOneById($id);
 
