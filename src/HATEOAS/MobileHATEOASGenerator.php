@@ -2,7 +2,6 @@
 
 namespace App\HATEOAS;
 
-
 use App\Entity\Mobile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -24,4 +23,3 @@ class MobileHATEOASGenerator
         return true;
     }
 }
-

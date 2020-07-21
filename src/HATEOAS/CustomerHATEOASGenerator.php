@@ -19,7 +19,7 @@ class CustomerHATEOASGenerator
     public function selfLink()
     {
         $link = $this->router->generate('customer_show', ['id' => $this->customer->getId()], 3);
-        $this->customer->links[] = ['self' => $link]; 
+        $this->customer->links[] = ['self' => $link];
         return true;
     }
 
@@ -44,4 +44,3 @@ class CustomerHATEOASGenerator
         return true;
     }
 }
-

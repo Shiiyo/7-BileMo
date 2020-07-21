@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Exception;
+use App\Responder;
 use App\DTO\CustomerDTO;
 use App\Entity\Customer;
 use App\Normalizer as Normalizer;
@@ -12,7 +13,6 @@ use App\HATEOAS\CustomerHATEOASGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -23,9 +23,9 @@ class CustomerController extends AbstractController
 {
     /**
      * Describe the user asked
-     * 
+     *
      * @Route("/customers/{id}", name="customer_show", methods={"GET"}, requirements={"id"="\d+"})
-     * 
+     *
      */
     public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id, UserInterface $user, UrlGeneratorInterface$router, Request $request)
     {
@@ -49,12 +49,8 @@ class CustomerController extends AbstractController
         $customerDTO = new CustomerDTO($customer);
         $data = $serializer->serialize($customerDTO, 'json');
 
-        $response = new JsonResponse($data, 200, [], true);
-        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
-        $response->setEtag(md5($response->getContent()));
-        $response->setPublic();
-        $response->setMaxAge(3500);
-        $response->isNotModified($request);
+        $responder = new Responder;
+        $response = $responder->createReponse($request, $data, 200);
 
         return $response;
     }
@@ -65,12 +61,12 @@ class CustomerController extends AbstractController
     public function listAction(SerializerInterface $serializer, CustomerRepository $repo, Request $request, UserInterface $user)
     {
         //Paging
-        $offset = max(0, $request->get('offset'));
+        $offset = max(1, $request->get('offset'));
         $nbResult =  max(2, $request->get('nbResult'));
         $totalPage = $repo->findMaxNbOfPage($nbResult, $user);
 
         try {
-            if ($offset > $totalPage || $offset <= 0) {
+            if ($offset > $totalPage) {
                 throw new Exception("La page n'existe pas.");
             }
         } catch (Exception $e) {
@@ -82,14 +78,15 @@ class CustomerController extends AbstractController
         $page = $repo->getCustomerPage($offset, $nbResult, $user);
 
         $normalizer = new Normalizer;
-        $data = $normalizer->normalize($page, 'list');
-        $jsonData = $serializer->serialize($data, 'json');
+        $pageData = $normalizer->normalize($page, 'list');
+        $jsonData = $serializer->serialize($pageData, 'json');
 
-        $response = new Response($jsonData, 200, ['Content-Type', 'application/json']);
-        $response->setEtag(md5($response->getContent()));
-        $response->setPublic();
-        $response->setMaxAge(3500);
-        $response->isNotModified($request);
+        //Add page's indication
+        $pagesIndication[] = ["pageIndication" => "Vous êtes à la page " . $offset . " sur " . $totalPage];
+        $data = json_encode(array_merge(json_decode($jsonData, true), $pagesIndication));
+
+        $responder = new Responder;
+        $response = $responder->createReponse($request, $data, 200);
 
         return $response;
     }
@@ -106,7 +103,7 @@ class CustomerController extends AbstractController
             $errors = $validator->validate($newCustomer);
             if (count($errors) > 0) {
                 $errorsString = "";
-                foreach($errors as $error){
+                foreach ($errors as $error) {
                     $errorsString .= "- " . $error->getMessage(). " ";
                 }
                 throw new Exception($errorsString);
@@ -129,8 +126,8 @@ class CustomerController extends AbstractController
         $customerDTO = new CustomerDTO($newCustomer);
         $data = $serializer->serialize($customerDTO, 'json');
 
-        $response = new JsonResponse($data, 201, [], true);
-        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $responder = new Responder;
+        $response = $responder->createReponse($request, $data, 201);
 
         return $response;
     }
@@ -152,7 +149,7 @@ class CustomerController extends AbstractController
             return $response;
         }
         
-        if($updateCustomer->getLastName() !== null ){
+        if ($updateCustomer->getLastName() !== null) {
             $oldCustomer->setLastName($updateCustomer->getLastName());
         }
 
@@ -176,8 +173,8 @@ class CustomerController extends AbstractController
         $customerDTO = new CustomerDTO($oldCustomer);
         $data = $serializer->serialize($customerDTO, 'json');
 
-        $response = new JsonResponse($data, 200, [], true);
-        $response->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        $responder = new Responder;
+        $response = $responder->createReponse($request, $data, 200);
 
         return $response;
     }
@@ -205,4 +202,3 @@ class CustomerController extends AbstractController
         return $response;
     }
 }
-

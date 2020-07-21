@@ -19,12 +19,12 @@ class UserFixtures extends Fixture
     {
         $faker = \Faker\Factory::create('fr_FR');
 
-        foreach ($this->getNames() as $name)
-        {
+        foreach ($this->getNames() as $name) {
             $user = new User();
 
             $user->setName($name);
             $user->setEmail($faker->email());
+            $user->setRoles(["ROLE_ADMIN"]);
             $user->setUsername($faker->userName());
             $user->setPassword($faker->password());
 
@@ -34,10 +34,9 @@ class UserFixtures extends Fixture
 
     /**
      * Get the value of names
-     */ 
+     */
     public function getNames()
     {
         return $this->names;
     }
 }
-

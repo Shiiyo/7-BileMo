@@ -23,13 +23,11 @@ nelmio_api_doc:
                         - name: "offset"
                           in: "query"
                           description: "Numéro de la page"
-                          required: true 
                           type: "integer"
                         
                         - name: "nbResult"
                           in: "query"
                           description: "Nombre de résultats par page"
-                          required: true 
                           type: "integer"
                     responses:
                         200:
@@ -197,13 +195,11 @@ nelmio_api_doc:
                         - name: "offset"
                           in: "query"
                           description: "Numéro de la page"
-                          required: true 
                           type: "integer"
                             
                         - name: "nbResult"
                           in: "query"
                           description: "Nombre de résultats par page"
-                          required: true 
                           type: "integer"
                     responses:
                         200:
@@ -332,11 +328,14 @@ nelmio_api_doc:
                         type: "integer"
                     lastname:
                         type: "string"
+                    pageIndication:
+                        type: "string"
                 example:
                     - id: 1
                       lastname: "Dufour"
                     - id: 2
                       lastname: "Potier"
+                    - pageIndication: "Vous êtes à la page 2 sur 3"
 
             Mobile:
                 type: "object"
@@ -372,6 +371,8 @@ nelmio_api_doc:
                         type: "integer"
                     name:
                         type: "string"
+                    pageIndication:
+                        type: "string"
                 example:
                     - id: 1
                       name: "Basic BileMo"
@@ -381,6 +382,7 @@ nelmio_api_doc:
                       name: "BileMo 9"
                     - id: 4
                       name: "BileMo Special Edition"
+                    - pageIndication: "Vous êtes à la page 2 sur 3"
                             
             Loggin:
                 type: "object"

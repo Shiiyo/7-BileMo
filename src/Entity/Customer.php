@@ -53,7 +53,7 @@ class Customer
      */
     private $user;
 
-    public $links;    
+    public $links;
 
     public function getId(): ?int
     {
