@@ -9,9 +9,7 @@ use App\Repository\MobileRepository;
 use App\HATEOAS\MobileHATEOASGenerator;
 use App\Responder;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,16 +22,10 @@ class MobileController extends AbstractController
     public function showAction(SerializerInterface $serializer, MobileRepository $repo, UrlGeneratorInterface$router, Request $request)
     {
         $id = $request->get('id');
-        
-        try {
-            $mobile = $repo->findOneById($id);
+        $mobile = $repo->findOneById($id);
 
-            if ($mobile === null) {
-                throw new Exception("Ce mobile n'existe pas.");
-            }
-        } catch (Exception $e) {
-            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
-            return $response;
+        if ($mobile === null) {
+            throw new Exception("Ce mobile n'existe pas.", 404);
         }
 
         //Add links
@@ -59,17 +51,11 @@ class MobileController extends AbstractController
         $nbResult =  max(2, $request->get('nbResult'));
         $totalPage = $repo->findMaxNbOfPage($nbResult);
 
-        try {
-            if ($offset > $totalPage) {
-                throw new Exception("La page n'existe pas.");
-            }
-        } catch (Exception $e) {
-            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
-            return $response;
+        if ($offset > $totalPage) {
+            throw new Exception("La page n'existe pas.", 404);
         }
 
         $page = $repo->getMobilePage($offset, $nbResult);
-
 
         $normalizer = new Normalizer;
         $pageData = $normalizer->normalize($page, 'list');
