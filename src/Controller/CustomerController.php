@@ -30,15 +30,10 @@ class CustomerController extends AbstractController
     public function showAction(SerializerInterface $serializer, CustomerRepository $repo, UserInterface $user, UrlGeneratorInterface$router, Request $request)
     {
         $id = $request->get('id');
+        $customer = $repo->findOneByIdCustomUser($id, $user);
 
-        try {
-            $customer = $repo->findOneByIdCustomUser($id, $user);
-            if ($customer == null) {
-                throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
-            }
-        } catch (Exception $e) {
-            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
-            return $response;
+        if ($customer == null) {
+            throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.", 404);
         }
 
         //Add links
@@ -67,15 +62,9 @@ class CustomerController extends AbstractController
         $nbResult =  max(2, $request->get('nbResult'));
         $totalPage = $repo->findMaxNbOfPage($nbResult, $user);
 
-        try {
-            if ($offset > $totalPage) {
-                throw new Exception("La page n'existe pas.");
-            }
-        } catch (Exception $e) {
-            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
-            return $response;
+        if ($offset > $totalPage) {
+            throw new Exception("La page n'existe pas.", 404);
         }
-
 
         $page = $repo->getCustomerPage($offset, $nbResult, $user);
 
@@ -101,18 +90,13 @@ class CustomerController extends AbstractController
         $newCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json');
         $newCustomer->setUser($user);
 
-        try {
-            $errors = $validator->validate($newCustomer);
-            if (count($errors) > 0) {
-                $errorsString = "";
-                foreach ($errors as $error) {
-                    $errorsString .= "- " . $error->getMessage(). " ";
-                }
-                throw new Exception($errorsString);
+        $errors = $validator->validate($newCustomer);
+        if (count($errors) > 0) {
+            $errorsString = "";
+            foreach ($errors as $error) {
+                $errorsString .= "- " . $error->getMessage(). " ";
             }
-        } catch (Exception $e) {
-            $response = new Response("Erreur: " . $e->getMessage(), 400, [], true);
-            return $response;
+            throw new Exception($errorsString, 404);
         }
 
         $manager->persist($newCustomer);
@@ -142,14 +126,9 @@ class CustomerController extends AbstractController
         $updateCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json');
         $id = $request->get('id');
 
-        try {
-            $oldCustomer = $repo->findOneByIdCustomUser($id, $user);
-            if ($oldCustomer == null) {
-                throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
-            }
-        } catch (Exception $e) {
-            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
-            return $response;
+        $oldCustomer = $repo->findOneByIdCustomUser($id, $user);
+        if ($oldCustomer == null) {
+            throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.", 404);
         }
         
         if ($updateCustomer->getLastName() !== null) {
@@ -188,15 +167,10 @@ class CustomerController extends AbstractController
     public function deleteAction(Request $request, EntityManagerInterface $manager, CustomerRepository $repo, UserInterface $user)
     {
         $id = $request->get('id');
-        try {
-            $customer = $repo->findOneByIdCustomUser($id, $user);
+        $customer = $repo->findOneByIdCustomUser($id, $user);
 
-            if ($customer == null) {
-                throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.");
-            }
-        } catch (Exception $e) {
-            $response = new Response("Erreur: " . $e->getMessage(), 404, [], true);
-            return $response;
+        if ($customer == null) {
+            throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.", 404);
         }
 
         $manager->remove($customer);

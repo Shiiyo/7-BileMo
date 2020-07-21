@@ -9,6 +9,8 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserFixtures extends Fixture
 {
+    private $passwordEncoder;
+
     private $names = [
         'SFR',
         'Free',
@@ -16,9 +18,13 @@ class UserFixtures extends Fixture
         'Orange',
     ];
 
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $this->passwordEncoder = $passwordEncoder;
+    }
+
     public function load(ObjectManager $manager)
     {
-        $encoder = new UserPasswordEncoderInterface;
         $faker = \Faker\Factory::create('fr_FR');
 
         foreach ($this->getNames() as $name) {
@@ -27,10 +33,8 @@ class UserFixtures extends Fixture
             $user->setName($name);
             $user->setEmail($faker->email());
             $user->setRoles(["ROLE_ADMIN"]);
-            $user->setUsername($faker->userName());
-
-            $password = $encoder->encodePassword($user, "admin");
-            $user->setPassword($password);
+            $user->setUsername($name);
+            $user->setPassword($this->passwordEncoder->encodePassword($user, 'admin'));
 
             $manager->persist($user);
         }
