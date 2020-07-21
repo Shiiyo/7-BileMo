@@ -39,7 +39,7 @@ If you want to use the API you will need a token. To generate it you will have t
 <code>curl --request POST \
   --url <http://127.0.0.1:8000/api/login_check> \
   --header 'content-type: application/json' \
-  --data '{"username":"Orange","password":"yourPassword"}'</code></br>
+  --data '{"username":"Free","password":"admin"}'</code></br>
   </br>
   For each request you just have to add on the headers the token like this:
   <code>authorization: Bearer token</code>
