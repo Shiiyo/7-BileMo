@@ -27,8 +27,10 @@ class CustomerController extends AbstractController
      * @Route("/customers/{id}", name="customer_show", methods={"GET"}, requirements={"id"="\d+"})
      *
      */
-    public function showAction(SerializerInterface $serializer, CustomerRepository $repo, $id, UserInterface $user, UrlGeneratorInterface$router, Request $request)
+    public function showAction(SerializerInterface $serializer, CustomerRepository $repo, UserInterface $user, UrlGeneratorInterface$router, Request $request)
     {
+        $id = $request->get('id');
+
         try {
             $customer = $repo->findOneByIdCustomUser($id, $user);
             if ($customer == null) {
@@ -135,9 +137,10 @@ class CustomerController extends AbstractController
     /**
      * @Route("/customers/{id}", name="customer_update", methods={"PUT"}, requirements={"id"="\d+"})
      */
-    public function updateAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, CustomerRepository $repo, $id, UserInterface$user, UrlGeneratorInterface $router)
+    public function updateAction(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, CustomerRepository $repo, UserInterface $user, UrlGeneratorInterface $router)
     {
         $updateCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json');
+        $id = $request->get('id');
 
         try {
             $oldCustomer = $repo->findOneByIdCustomUser($id, $user);
@@ -182,8 +185,9 @@ class CustomerController extends AbstractController
     /**
      * @Route("/customers/{id}", name="customer_delete", methods={"DELETE"}, requirements={"id"="\d+"})
      */
-    public function deleteAction($id, EntityManagerInterface $manager, CustomerRepository $repo, UserInterface $user)
+    public function deleteAction(Request $request, EntityManagerInterface $manager, CustomerRepository $repo, UserInterface $user)
     {
+        $id = $request->get('id');
         try {
             $customer = $repo->findOneByIdCustomUser($id, $user);
 
