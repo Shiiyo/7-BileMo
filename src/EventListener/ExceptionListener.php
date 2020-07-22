@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
-class ExceptionListener
+class ExceptionListener implements ExceptionListenerInterface
 {
     public function onKernelException(ExceptionEvent $event)
     {

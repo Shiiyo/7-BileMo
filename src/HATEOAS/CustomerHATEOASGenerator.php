@@ -5,7 +5,7 @@ namespace App\HATEOAS;
 use App\Entity\Customer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class CustomerHATEOASGenerator
+class CustomerHATEOASGenerator implements HATEOASGeneratorInterface
 {
     private $router;
     private $customer;

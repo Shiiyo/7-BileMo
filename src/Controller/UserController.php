@@ -28,6 +28,6 @@ class UserController extends AbstractController
         $manager->persist($newUser);
         $manager->flush();
 
-        return new Response("User created !", 201);
+        return new Response("User created !", Response::HTTP_CREATED);
     }
 }
