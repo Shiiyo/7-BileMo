@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -28,6 +29,6 @@ class UserController extends AbstractController
         $manager->persist($newUser);
         $manager->flush();
 
-        return new Response("User created !", 201);
+        return new JsonResponse("User created !", Response::HTTP_CREATED);
     }
 }

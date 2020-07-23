@@ -13,6 +13,7 @@ use App\HATEOAS\CustomerHATEOASGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -33,7 +34,7 @@ class CustomerController extends AbstractController
         $customer = $repo->findOneByIdCustomUser($id, $user);
 
         if ($customer == null) {
-            throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.", 404);
+            throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.", Response::HTTP_NOT_FOUND);
         }
 
         //Add links
@@ -47,7 +48,7 @@ class CustomerController extends AbstractController
         $data = $serializer->serialize($customerDTO, 'json');
 
         $responder = new Responder;
-        $response = $responder->createReponse($request, $data, 200);
+        $response = $responder->createReponse($request, $data, Response::HTTP_OK);
 
         return $response;
     }
@@ -63,7 +64,7 @@ class CustomerController extends AbstractController
         $totalPage = $repo->findMaxNbOfPage($nbResult, $user);
 
         if ($offset > $totalPage) {
-            throw new Exception("La page n'existe pas.", 404);
+            throw new Exception("La page n'existe pas.", Response::HTTP_NOT_FOUND);
         }
 
         $page = $repo->getCustomerPage($offset, $nbResult, $user);
@@ -77,7 +78,7 @@ class CustomerController extends AbstractController
         $data = json_encode(array_merge(json_decode($jsonData, true), $pagesIndication));
 
         $responder = new Responder;
-        $response = $responder->createReponse($request, $data, 200);
+        $response = $responder->createReponse($request, $data, Response::HTTP_OK);
 
         return $response;
     }
@@ -96,7 +97,7 @@ class CustomerController extends AbstractController
             foreach ($errors as $error) {
                 $errorsString .= "- " . $error->getMessage(). " ";
             }
-            throw new Exception($errorsString, 404);
+            throw new Exception($errorsString, Response::HTTP_NOT_FOUND);
         }
 
         $manager->persist($newCustomer);
@@ -113,7 +114,7 @@ class CustomerController extends AbstractController
         $data = $serializer->serialize($customerDTO, 'json');
 
         $responder = new Responder;
-        $response = $responder->createReponse($request, $data, 201);
+        $response = $responder->createReponse($request, $data, Response::HTTP_CREATED);
 
         return $response;
     }
@@ -128,7 +129,7 @@ class CustomerController extends AbstractController
 
         $oldCustomer = $repo->findOneByIdCustomUser($id, $user);
         if ($oldCustomer == null) {
-            throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.", 404);
+            throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.", Response::HTTP_NOT_FOUND);
         }
         
         if ($updateCustomer->getLastName() !== null) {
@@ -156,7 +157,7 @@ class CustomerController extends AbstractController
         $data = $serializer->serialize($customerDTO, 'json');
 
         $responder = new Responder;
-        $response = $responder->createReponse($request, $data, 200);
+        $response = $responder->createReponse($request, $data, Response::HTTP_OK);
 
         return $response;
     }
@@ -170,13 +171,13 @@ class CustomerController extends AbstractController
         $customer = $repo->findOneByIdCustomUser($id, $user);
 
         if ($customer == null) {
-            throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.", 404);
+            throw new Exception("L'utilisateur n'existe pas ou vous n'êtes pas propriétaire de cet utilisateur.", Response::HTTP_NOT_FOUND);
         }
 
         $manager->remove($customer);
         $manager->flush();
 
-        $response = new Response("Utilisateur supprimé !", 200);
+        $response = new JsonResponse("Utilisateur supprimé !");
         return $response;
     }
 }

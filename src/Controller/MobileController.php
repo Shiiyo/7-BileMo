@@ -3,12 +3,13 @@
 namespace App\Controller;
 
 use Exception;
+use App\Responder;
 use App\DTO\MobileDTO;
 use App\Normalizer as Normalizer;
 use App\Repository\MobileRepository;
 use App\HATEOAS\MobileHATEOASGenerator;
-use App\Responder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -25,7 +26,7 @@ class MobileController extends AbstractController
         $mobile = $repo->findOneById($id);
 
         if ($mobile === null) {
-            throw new Exception("Ce mobile n'existe pas.", 404);
+            throw new Exception("Ce mobile n'existe pas.", Response::HTTP_NOT_FOUND);
         }
 
         //Add links
@@ -36,7 +37,7 @@ class MobileController extends AbstractController
         $data = $serializer->serialize($mobileDTO, 'json');
 
         $responder = new Responder;
-        $response = $responder->createReponse($request, $data, 200);
+        $response = $responder->createReponse($request, $data, Response::HTTP_OK);
 
         return $response;
     }
@@ -52,7 +53,7 @@ class MobileController extends AbstractController
         $totalPage = $repo->findMaxNbOfPage($nbResult);
 
         if ($offset > $totalPage) {
-            throw new Exception("La page n'existe pas.", 404);
+            throw new Exception("La page n'existe pas.", Response::HTTP_NOT_FOUND);
         }
 
         $page = $repo->getMobilePage($offset, $nbResult);
@@ -66,7 +67,7 @@ class MobileController extends AbstractController
         $data = json_encode(array_merge(json_decode($jsonData, true), $pagesIndication));
 
         $responder = new Responder;
-        $response = $responder->createReponse($request, $data, 200);
+        $response = $responder->createReponse($request, $data, Response::HTTP_OK);
 
         return $response;
     }
