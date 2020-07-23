@@ -13,6 +13,7 @@ use App\HATEOAS\CustomerHATEOASGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -176,8 +177,7 @@ class CustomerController extends AbstractController
         $manager->remove($customer);
         $manager->flush();
 
-        $responder = new Responder;
-        $response = $responder->createReponse($request, "Utilisateur supprimé !", Response::HTTP_OK);
+        $response = new JsonResponse("Utilisateur supprimé !");
         return $response;
     }
 }
