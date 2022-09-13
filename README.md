@@ -5,6 +5,13 @@ OpenClassrooms project as part of the PHP / Symfony application developer course
 [![Maintainability](https://api.codeclimate.com/v1/badges/a87a84353a720a496c96/maintainability)](https://codeclimate.com/github/Shiiyo/7-BileMo/maintainability)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/4a70928a83ff40a4a7aea6231c5dc760)](https://www.codacy.com/manual/Shiiyo/7-BileMo?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Shiiyo/7-BileMo&amp;utm_campaign=Badge_Grade)
 
+##Enoncé
+BileMo est une entreprise offrant toute une sélection de téléphones mobiles haut de gamme.
+
+Vous êtes en charge du développement de la vitrine de téléphones mobiles de l’entreprise BileMo. Le business modèle de BileMo n’est pas de vendre directement ses produits sur le site web, mais de fournir à toutes les plateformes qui le souhaitent l’accès au catalogue via une API (Application Programming Interface). Il s’agit donc de vente exclusivement en B2B (business to business).
+
+Il va falloir que vous exposiez un certain nombre d’API pour que les applications des autres plateformes web puissent effectuer des opérations.
+
 ## Prerequisite
 -   Php 7.4.2
 -   MySQL
